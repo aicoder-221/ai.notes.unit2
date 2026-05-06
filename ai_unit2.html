@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📊 Data Science Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Fraunces:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d45;
+    --accent: #3b82f6;
+    --accent2: #8b5cf6;
+    --accent3: #06b6d4;
+    --accent4: #10b981;
+    --accent5: #f59e0b;
+    --accent6: #ef4444;
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    --glow: 0 0 20px rgba(59,130,246,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background mesh */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(59,130,246,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(139,92,246,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+
+  /* ─── SIDEBAR NAV ─── */
+  #sidebar {
+    width: 270px;
+    min-height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    position: fixed;
+    top: 0; left: 0;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    z-index: 100;
+  }
+
+  #sidebar .logo {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+  #sidebar .logo span { color: var(--accent2); }
+  #sidebar .subtitle { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 28px; }
+
+  .nav-section-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    padding: 12px 8px 6px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.84rem;
+    color: var(--text-dim);
+    transition: all 0.2s;
+    text-decoration: none;
+    margin-bottom: 2px;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(59,130,246,0.12); color: var(--accent); border-left: 2px solid var(--accent); }
+  .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+
+  /* Progress bar */
+  .progress-wrap { margin: 20px 0 0; }
+  .progress-label { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 999px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 999px; transition: width 0.4s ease; }
+
+  /* ─── MAIN CONTENT ─── */
+  #main {
+    margin-left: 270px;
+    flex: 1;
+    padding: 40px 48px;
+    max-width: calc(100% - 270px);
+  }
+
+  .page-header {
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1.1;
+    background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  .page-header p { color: var(--text-dim); font-size: 0.9rem; }
+
+  /* ─── SECTION ─── */
+  .section { margin-bottom: 56px; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-icon { font-size: 1.5rem; }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .section-badge {
+    margin-left: auto;
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(59,130,246,0.15);
+    color: var(--accent);
+    border: 1px solid rgba(59,130,246,0.25);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ─── TABS ─── */
+  .tabs { margin-bottom: 24px; }
+  .tab-list {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 8px 18px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.84rem;
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    margin-bottom: -1px;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-pane { display: none; animation: fadeIn 0.25s ease; }
+  .tab-pane.active { display: block; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .card:hover { border-color: rgba(59,130,246,0.3); box-shadow: var(--glow); }
+
+  .card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card ul { list-style: none; }
+  .card ul li {
+    padding: 5px 0;
+    color: var(--text-dim);
+    font-size: 0.88rem;
+    padding-left: 16px;
+    position: relative;
+  }
+  .card ul li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 0.75rem;
+  }
+
+  /* ─── PIPELINE STEPS ─── */
+  .pipeline-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .step-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+
+  .step-header {
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .step-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+  }
+  .step-title { font-size: 0.9rem; font-weight: 600; }
+  .step-emoji { font-size: 1.1rem; margin-left: auto; }
+  .step-body {
+    padding: 0 18px 14px;
+    display: none;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+  .step-body.open { display: block; animation: fadeIn 0.2s ease; }
+  .step-body p { font-size: 0.84rem; color: var(--text-dim); margin-bottom: 8px; }
+  .step-body ul { list-style: none; }
+  .step-body ul li { font-size: 0.82rem; color: var(--text-dim); padding: 3px 0 3px 14px; position: relative; }
+  .step-body ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent3); }
+
+  /* Color variants for steps */
+  .s1 .step-num { background: rgba(59,130,246,0.15); color: #3b82f6; }
+  .s1 .step-header { border-left: 3px solid #3b82f6; }
+  .s2 .step-num { background: rgba(139,92,246,0.15); color: #8b5cf6; }
+  .s2 .step-header { border-left: 3px solid #8b5cf6; }
+  .s3 .step-num { background: rgba(6,182,212,0.15); color: #06b6d4; }
+  .s3 .step-header { border-left: 3px solid #06b6d4; }
+  .s4 .step-num { background: rgba(16,185,129,0.15); color: #10b981; }
+  .s4 .step-header { border-left: 3px solid #10b981; }
+  .s5 .step-num { background: rgba(245,158,11,0.15); color: #f59e0b; }
+  .s5 .step-header { border-left: 3px solid #f59e0b; }
+  .s6 .step-num { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .s6 .step-header { border-left: 3px solid #ef4444; }
+  .s7 .step-num { background: rgba(236,72,153,0.15); color: #ec4899; }
+  .s7 .step-header { border-left: 3px solid #ec4899; }
+  .s8 .step-num { background: rgba(251,146,60,0.15); color: #fb923c; }
+  .s8 .step-header { border-left: 3px solid #fb923c; }
+  .s9 .step-num { background: rgba(34,211,238,0.15); color: #22d3ee; }
+  .s9 .step-header { border-left: 3px solid #22d3ee; }
+  .s10 .step-num { background: rgba(167,243,208,0.15); color: #6ee7b7; }
+  .s10 .step-header { border-left: 3px solid #6ee7b7; }
+
+  /* ─── CHIPS ─── */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .chip {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .chip-blue { background: rgba(59,130,246,0.1); color: #60a5fa; border-color: rgba(59,130,246,0.3); }
+  .chip-purple { background: rgba(139,92,246,0.1); color: #a78bfa; border-color: rgba(139,92,246,0.3); }
+  .chip-green { background: rgba(16,185,129,0.1); color: #34d399; border-color: rgba(16,185,129,0.3); }
+  .chip-amber { background: rgba(245,158,11,0.1); color: #fbbf24; border-color: rgba(245,158,11,0.3); }
+  .chip-red { background: rgba(239,68,68,0.1); color: #f87171; border-color: rgba(239,68,68,0.3); }
+  .chip-cyan { background: rgba(6,182,212,0.1); color: #22d3ee; border-color: rgba(6,182,212,0.3); }
+
+  /* ─── DEFINITION BOX ─── */
+  .def-box {
+    background: rgba(59,130,246,0.06);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 12px 0;
+    font-size: 0.87rem;
+  }
+  .def-box strong { color: var(--accent); display: block; margin-bottom: 4px; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ─── FORMULA BOX ─── */
+  .formula-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 12px 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .formula-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+  .formula-name { color: var(--accent2); font-weight: 600; font-size: 1rem; margin-bottom: 6px; }
+  .formula-expr { color: var(--accent3); font-size: 0.9rem; margin-bottom: 8px; }
+  .formula-notes { font-size: 0.78rem; color: var(--text-dim); font-family: 'Space Grotesk', sans-serif; }
+  .formula-notes span { display: block; padding: 2px 0; }
+  .formula-notes span::before { content: '✔ '; color: var(--accent4); }
+
+  /* ─── ANALYTICS GRID ─── */
+  .analytics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .analytics-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: transform 0.2s;
+  }
+  .analytics-card:hover { transform: translateY(-2px); }
+  .analytics-type { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; }
+  .analytics-q { font-size: 1rem; font-weight: 700; margin-bottom: 10px; font-family: 'Fraunces', serif; }
+  .analytics-focus { display: inline-block; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; margin-bottom: 10px; }
+
+  .a1 { border-top: 3px solid #3b82f6; }
+  .a1 .analytics-type { color: #3b82f6; }
+  .a1 .analytics-focus { background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .a2 { border-top: 3px solid #8b5cf6; }
+  .a2 .analytics-type { color: #8b5cf6; }
+  .a2 .analytics-focus { background: rgba(139,92,246,0.15); color: #a78bfa; }
+  .a3 { border-top: 3px solid #06b6d4; }
+  .a3 .analytics-type { color: #06b6d4; }
+  .a3 .analytics-focus { background: rgba(6,182,212,0.15); color: #22d3ee; }
+  .a4 { border-top: 3px solid #10b981; }
+  .a4 .analytics-type { color: #10b981; }
+  .a4 .analytics-focus { background: rgba(16,185,129,0.15); color: #34d399; }
+
+  /* ─── TABLE ─── */
+  .styled-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .styled-table th {
+    background: var(--surface2);
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .styled-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .styled-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ─── REVISION BOX ─── */
+  .revision-box {
+    background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(251,146,60,0.05));
+    border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-top: 20px;
+  }
+  .revision-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #f59e0b;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .revision-box ul { list-style: none; }
+  .revision-box ul li { font-size: 0.85rem; color: var(--text-dim); padding: 4px 0 4px 16px; position: relative; }
+  .revision-box ul li::before { content: '⚡'; position: absolute; left: 0; font-size: 0.7rem; }
+
+  /* ─── QUIZ ─── */
+  .quiz-container { }
+  .quiz-q {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .quiz-q-num { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; font-family: 'JetBrains Mono', monospace; }
+  .quiz-q-text { font-size: 0.92rem; font-weight: 500; margin-bottom: 14px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    padding: 10px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.84rem;
+    color: var(--text-dim);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .quiz-opt:hover { border-color: var(--accent); color: var(--text); }
+  .quiz-opt.correct { background: rgba(16,185,129,0.12); border-color: #10b981; color: #34d399; }
+  .quiz-opt.wrong { background: rgba(239,68,68,0.1); border-color: #ef4444; color: #f87171; }
+  .quiz-opt-key { width: 22px; height: 22px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; font-family: 'JetBrains Mono', monospace; }
+
+  .short-answer-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    resize: vertical;
+    min-height: 60px;
+    transition: border-color 0.2s;
+  }
+  .short-answer-input:focus { outline: none; border-color: var(--accent); }
+  .reveal-btn {
+    margin-top: 10px;
+    padding: 7px 16px;
+    background: rgba(59,130,246,0.15);
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 6px;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-family: 'Space Grotesk', sans-serif;
+    transition: all 0.2s;
+  }
+  .reveal-btn:hover { background: rgba(59,130,246,0.25); }
+  .answer-reveal {
+    display: none;
+    margin-top: 10px;
+    background: rgba(16,185,129,0.08);
+    border: 1px solid rgba(16,185,129,0.2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.84rem;
+    color: #34d399;
+  }
+  .answer-reveal.show { display: block; animation: fadeIn 0.2s ease; }
+
+  /* ─── EXAM QUESTIONS ─── */
+  .exam-q {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.87rem;
+    color: var(--text-dim);
+  }
+  .exam-q:last-child { border-bottom: none; }
+  .exam-q-num { color: var(--accent2); font-family: 'JetBrains Mono', monospace; font-weight: 600; flex-shrink: 0; }
+  .exam-mark { margin-left: auto; flex-shrink: 0; font-size: 0.72rem; padding: 2px 8px; background: rgba(139,92,246,0.1); color: var(--accent2); border-radius: 4px; border: 1px solid rgba(139,92,246,0.2); height: fit-content; }
+
+  /* ─── COLLAPSIBLE ─── */
+  .collapsible-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 12px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .collapsible-header:hover { border-color: rgba(59,130,246,0.3); }
+  .collapsible-header .arrow { margin-left: auto; transition: transform 0.2s; font-size: 0.8rem; color: var(--text-muted); }
+  .collapsible-header.open .arrow { transform: rotate(90deg); }
+  .collapsible-body { display: none; padding: 4px 0 12px; }
+  .collapsible-body.open { display: block; animation: fadeIn 0.2s ease; }
+
+  /* ─── MODEL COMPARISON ─── */
+  .model-row {
+    display: grid;
+    grid-template-columns: 120px 1fr 1fr 1fr;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.84rem;
+  }
+  .model-row:first-child { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+  .model-row .label { color: var(--accent); font-weight: 600; }
+  .model-row span { color: var(--text-dim); }
+
+  /* ─── SUMMARY BOX ─── */
+  .summary-box {
+    background: linear-gradient(135deg, rgba(139,92,246,0.07), rgba(59,130,246,0.05));
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-top: 24px;
+  }
+  .summary-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent2); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .summary-box p { font-size: 0.86rem; color: var(--text-dim); line-height: 1.7; }
+
+  /* ─── RESPONSIVE ─── */
+  .hamburger { display: none; position: fixed; top: 16px; left: 16px; z-index: 200; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; cursor: pointer; font-size: 1.1rem; }
+
+  @media (max-width: 900px) {
+    #sidebar { transform: translateX(-100%); }
+    #sidebar.open { transform: translateX(0); }
+    #main { margin-left: 0; max-width: 100%; padding: 24px 20px; padding-top: 64px; }
+    .hamburger { display: block; }
+    .analytics-grid { grid-template-columns: 1fr; }
+    .pipeline-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ─── SCORE ─── */
+  #quiz-score {
+    display: none;
+    background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(6,182,212,0.08));
+    border: 1px solid rgba(16,185,129,0.25);
+    border-radius: 12px;
+    padding: 20px 24px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  #quiz-score .score-num { font-family: 'Fraunces', serif; font-size: 3rem; color: var(--accent4); line-height: 1; }
+  #quiz-score .score-label { font-size: 0.85rem; color: var(--text-dim); margin-top: 6px; }
+
+  .submit-quiz-btn {
+    padding: 12px 28px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    transition: opacity 0.2s;
+    margin-top: 20px;
+  }
+  .submit-quiz-btn:hover { opacity: 0.85; }
+
+  /* overlay for mobile */
+  #overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
+  #overlay.show { display: block; }
+
+  /* Train test split bar */
+  .split-bar { display: flex; border-radius: 8px; overflow: hidden; margin: 12px 0; height: 36px; }
+  .split-train { background: linear-gradient(90deg, rgba(59,130,246,0.4), rgba(59,130,246,0.6)); flex: 8; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; color: #93c5fd; }
+  .split-test { background: linear-gradient(90deg, rgba(139,92,246,0.4), rgba(139,92,246,0.6)); flex: 2; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; color: #c4b5fd; }
+
+  /* Overfitting visual */
+  .fit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .fit-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+  .fit-icon { font-size: 2rem; margin-bottom: 8px; }
+  .fit-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
+  .fit-desc { font-size: 0.78rem; color: var(--text-muted); }
+  .fit-bad { border-color: rgba(239,68,68,0.3); }
+  .fit-good { border-color: rgba(16,185,129,0.3); }
+  .fit-warn { border-color: rgba(245,158,11,0.3); }
+</style>
+</head>
+<body>
+
+<button class="hamburger" onclick="toggleSidebar()">☰</button>
+<div id="overlay" onclick="closeSidebar()"></div>
+
+<div class="wrapper">
+<!-- ─── SIDEBAR ─── -->
+<nav id="sidebar">
+  <div class="logo">📊 DS<span>Notes</span></div>
+  <div class="subtitle">Data Science · Exam Prep</div>
+
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Progress</span><span id="progress-pct">0%</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="nav-section-label">📚 Topics</div>
+  <a class="nav-item active" onclick="scrollTo('pipeline')">
+    <span class="nav-icon">🎯</span> Data Science Pipeline
+  </a>
+  <a class="nav-item" onclick="scrollTo('modules')">
+    <span class="nav-icon">📦</span> Pipeline Modules
+  </a>
+  <a class="nav-item" onclick="scrollTo('analytics')">
+    <span class="nav-icon">🧠</span> Types of Analytics
+  </a>
+  <a class="nav-item" onclick="scrollTo('datareq')">
+    <span class="nav-icon">📋</span> Data Requirements
+  </a>
+  <a class="nav-item" onclick="scrollTo('datacol')">
+    <span class="nav-icon">🗄️</span> Data Collection
+  </a>
+  <a class="nav-item" onclick="scrollTo('dataund')">
+    <span class="nav-icon">🔍</span> Data Understanding
+  </a>
+  <a class="nav-item" onclick="scrollTo('dataprep')">
+    <span class="nav-icon">🧹</span> Data Preparation
+  </a>
+  <a class="nav-item" onclick="scrollTo('modelling')">
+    <span class="nav-icon">🤖</span> Modelling
+  </a>
+  <a class="nav-item" onclick="scrollTo('evaluation')">
+    <span class="nav-icon">📏</span> Evaluation & Metrics
+  </a>
+  <a class="nav-item" onclick="scrollTo('overfitting')">
+    <span class="nav-icon">⚖️</span> Overfitting
+  </a>
+  <a class="nav-item" onclick="scrollTo('validation')">
+    <span class="nav-icon">🔁</span> Validation Methods
+  </a>
+
+  <div class="nav-section-label">🎓 Assessment</div>
+  <a class="nav-item" onclick="scrollTo('quiz')">
+    <span class="nav-icon">❓</span> Interactive Quiz
+  </a>
+  <a class="nav-item" onclick="scrollTo('examq')">
+    <span class="nav-icon">📝</span> Exam Questions
+  </a>
+  <a class="nav-item" onclick="scrollTo('tips')">
+    <span class="nav-icon">⚡</span> Exam Tips
+  </a>
+</nav>
+
+<!-- ─── MAIN ─── -->
+<main id="main">
+
+  <div class="page-header">
+    <h1>Data Science Notes</h1>
+    <p>John Rollins Pipeline · Analytics Types · Modelling · Evaluation · Exam Prep &nbsp;|&nbsp; <span style="color:var(--accent4)">Click steps to expand ↓</span></p>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 1: PIPELINE
+  ══════════════════════════════════════ -->
+  <div class="section" id="pipeline">
+    <div class="section-header">
+      <span class="section-icon">🎯</span>
+      <span class="section-title">Data Science Pipeline</span>
+      <span class="section-badge">10 Steps</span>
+    </div>
+
+    <div class="def-box">
+      <strong>📌 Definition</strong>
+      The <b>John Rollins Data Science Pipeline</b> is a systematic, 10-step process used to solve real-world problems using data and AI — from understanding the business problem to deploying and improving models.
+    </div>
+
+    <div class="chips">
+      <span class="chip chip-blue">Systematic Process</span>
+      <span class="chip chip-purple">AI & ML</span>
+      <span class="chip chip-green">Real-world Problems</span>
+      <span class="chip chip-amber">John Rollins</span>
+    </div>
+
+    <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:16px;">👇 Click any step to expand details</p>
+
+    <div class="pipeline-grid">
+
+      <div class="step-card s1" onclick="toggleStep(this)">
+        <div class="step-header">
+          <div class="step-num">01</div>
+          <div class="step-title">Business Understanding</div>
+          <div class="step-emoji">🎯</div>
+        </div>
+        <div class="step-body">
+          <p>Define the problem clearly in <b>business terms</b>.</p>
+          <ul>
+            <li>Set goals & success criteria</li>
+            <li>Understand business impact</li>
+            <li>Example: Reduce stockouts by predicting demand</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step-card s2" onclick="toggleStep(this)">
+        <div class="step-header">
+          <div class="step-num">02</div>
+          <div class="step-title">Analytic Approach</div>
+          <div class="step-emoji">🧭</div>
+        </div>
+        <div class="step-body">
+          <p>Choose the type of analysis or model needed.</p>
+          <ul>
+            <li>Prediction → Regression</li>
+            <li>Classification → Category output</li>
+            <li>Grouping → Clustering</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step-card s3" onclick="toggleStep(this)">
+        <div class="step-header">
+          <div class="step-num">03</div>
+          <div class="step-title">Data Requirements</div>
+          <div class="step-emoji">📋</div>
+        </div>
+        <div class="step-body">
+          <p>Decide <b>what data</b> is needed.</p>
+          <ul>
+            <li>Target variable (output to predict)</li>
+            <li>Features (input variables)</li>
+            <li>Data format: CSV, Database</li>
+            <li>Time period (e.g., last 2 years)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step-card s4" onclick="toggleStep(this)">
+        <div class="step-header">
+          <div class="step-num">04</div>
+          <div class="step-title">Data Collection</div>
+          <div class="step-emoji">🗄️</div>
+        </div>
+        <div class="step-body">
+          <p>Collect data from various sources.</p>
+          <ul>
+            <li>Databases & APIs</li>
+            <li>Surveys</li>
+            <li>Public datasets</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step-card s5" onclick="toggleStep(this)">
+        <div class="step-header">
+          <div class="step-num">05</div>
+          <div class="step-title">Data Understanding</div>
+          <div class="step-emoji">🔍</div>
+        </div>
+        <div class="step-body">
+          <p>Explore and analyse data to check quality.</p>
+          <ul>
+            <li>Identify patterns</li>
+            <li>Find missing values</li>
+            <li>Detect outliers</li>
+            <li>Validate data relevance</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step-card s6" onclick="toggleStep(this)">
+        <div class="step-header">
+          <div class="step-num">06</div>
+          <div class="step-title">Data Preparation</div>
+          <div class="step-emoji">🧹</div>
+        </div>
+        <div class="step-body">
+          <p>Convert raw data into usable format — <b>most important step!</b></p>
+          <ul>
+            <li>Cleaning (remove errors)</li>
+            <li>Transformation (scaling, encoding)</li>
+            <li>Feature engineering (create new features)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step-card s7" onclick="toggleStep(this)">
+        <div class="step-header">
+          <div class="step-num">07</div>
+          <div class="step-title">Modelling</div>
+          <div class="step-emoji">🤖</div>
+        </div>
+        <div class="step-body">
+          <p>Train machine learning model using prepared data.</p>
+          <ul>
+            <li>Select algorithm</li>
+            <li>Train on dataset</li>
+            <li>Tune parameters (hyperparameters)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step-card s8" onclick="toggleStep(this)">
+        <div class="step-header">
+          <div class="step-num">08</div>
+          <div class="step-title">Evaluation</div>
+          <div class="step-emoji">📏</div>
+        </div>
+        <div class="step-body">
+          <p>Check model performance using metrics.</p>
+          <ul>
+            <li>Accuracy is acceptable</li>
+            <li>Model meets business goal</li>
+            <li>MAE, MSE, RMSE (regression)</li>
+            <li>Accuracy, F1, Precision, Recall (classification)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step-card s9" onclick="toggleStep(this)">
+        <div class="step-header">
+          <div class="step-num">09</div>
+          <div class="step-title">Deployment</div>
+          <div class="step-emoji">🚀</div>
+        </div>
+        <div class="step-body">
+          <p>Implement model in real-world system.</p>
+          <ul>
+            <li>Website / App integration</li>
+            <li>Inventory system</li>
+            <li>Generates predictions automatically</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step-card s10" onclick="toggleStep(this)">
+        <div class="step-header">
+          <div class="step-num">10</div>
+          <div class="step-title">Feedback</div>
+          <div class="step-emoji">🔄</div>
+        </div>
+        <div class="step-body">
+          <p>Continuously improve model based on real results.</p>
+          <ul>
+            <li>Collect real-world results</li>
+            <li>Retrain model regularly</li>
+            <li>Fix errors</li>
+            <li>Monitor performance</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="revision-box">
+      <div class="revision-title">⚡ Quick Revision — Pipeline Order</div>
+      <ul>
+        <li>Business Understanding → Analytic Approach → Data Requirements → Collection</li>
+        <li>→ Understanding → Preparation → Modelling → Evaluation → Deployment → Feedback</li>
+        <li>Data Preparation is the <b>most time-consuming & important</b> step</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 2: MODULES
+  ══════════════════════════════════════ -->
+  <div class="section" id="modules">
+    <div class="section-header">
+      <span class="section-icon">📦</span>
+      <span class="section-title">Pipeline Modules</span>
+      <span class="section-badge">5 Modules</span>
+    </div>
+    <div style="overflow:auto; border-radius:10px; border:1px solid var(--border);">
+      <table class="styled-table">
+        <thead><tr><th>Module</th><th>Steps</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><span class="chip chip-blue">Module 1</span></td><td>Steps 1–2</td><td>Define problem & choose analytic approach</td></tr>
+          <tr><td><span class="chip chip-purple">Module 2</span></td><td>Steps 3–4</td><td>Decide data needs & collect data</td></tr>
+          <tr><td><span class="chip chip-cyan">Module 3</span></td><td>Steps 5–6</td><td>Understand & prepare data</td></tr>
+          <tr><td><span class="chip chip-green">Module 4</span></td><td>Steps 7–8</td><td>Build & evaluate model</td></tr>
+          <tr><td><span class="chip chip-amber">Module 5</span></td><td>Steps 9–10</td><td>Deploy model & improve via feedback</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 3: ANALYTICS TYPES
+  ══════════════════════════════════════ -->
+  <div class="section" id="analytics">
+    <div class="section-header">
+      <span class="section-icon">🧠</span>
+      <span class="section-title">Types of Data Analytics</span>
+      <span class="section-badge">4 Types</span>
+    </div>
+
+    <div class="analytics-grid">
+      <div class="analytics-card a1">
+        <div class="analytics-type">📊 Descriptive</div>
+        <div class="analytics-q">"What happened?"</div>
+        <span class="analytics-focus">Focus: Past</span>
+        <div class="chips"><span class="chip chip-blue">Mean</span><span class="chip chip-blue">Graphs</span><span class="chip chip-blue">Charts</span></div>
+        <p style="font-size:0.82rem;color:var(--text-muted)">Summarizes historical data to understand what has occurred.</p>
+      </div>
+
+      <div class="analytics-card a2">
+        <div class="analytics-type">🔎 Diagnostic</div>
+        <div class="analytics-q">"Why did it happen?"</div>
+        <span class="analytics-focus">Focus: Cause</span>
+        <div class="chips"><span class="chip chip-purple">Correlation</span><span class="chip chip-purple">Root Cause</span></div>
+        <p style="font-size:0.82rem;color:var(--text-muted)">Investigates reasons and factors behind observed trends.</p>
+      </div>
+
+      <div class="analytics-card a3">
+        <div class="analytics-type">🔮 Predictive</div>
+        <div class="analytics-q">"What will happen?"</div>
+        <span class="analytics-focus">Focus: Future</span>
+        <div class="chips"><span class="chip chip-cyan">Regression</span><span class="chip chip-cyan">Classification</span><span class="chip chip-cyan">ML Models</span></div>
+        <p style="font-size:0.82rem;color:var(--text-muted)">Uses historical data to forecast future outcomes.</p>
+      </div>
+
+      <div class="analytics-card a4">
+        <div class="analytics-type">💡 Prescriptive</div>
+        <div class="analytics-q">"What should we do?"</div>
+        <span class="analytics-focus">Focus: Action</span>
+        <div class="chips"><span class="chip chip-green">Optimization</span><span class="chip chip-green">Simulation</span></div>
+        <p style="font-size:0.82rem;color:var(--text-muted)">Suggests best decisions and actions to achieve goals.</p>
+      </div>
+    </div>
+
+    <div class="summary-box">
+      <div class="summary-title">📝 Section Summary</div>
+      <p>The 4 analytics types progress from understanding the past (Descriptive) → finding causes (Diagnostic) → predicting future (Predictive) → recommending actions (Prescriptive). Exam tip: remember the order and the key question each answers.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 4: DATA REQUIREMENTS
+  ══════════════════════════════════════ -->
+  <div class="section" id="datareq">
+    <div class="section-header">
+      <span class="section-icon">📋</span>
+      <span class="section-title">Data Requirements</span>
+      <span class="section-badge">Step 3</span>
+    </div>
+
+    <div class="tabs">
+      <div class="tab-list">
+        <button class="tab-btn active" onclick="switchTab(this,'req-key')">❓ Key Questions</button>
+        <button class="tab-btn" onclick="switchTab(this,'req-types')">📊 Data Types</button>
+      </div>
+
+      <div class="tab-pane active" id="req-key">
+        <div class="card">
+          <div class="card-title">🔑 5 Key Questions to Ask</div>
+          <ul>
+            <li>What is the <b>target variable</b> (output to predict)?</li>
+            <li>What <b>features</b> affect it (input variables)?</li>
+            <li>How much <b>historical data</b> is required?</li>
+            <li>What <b>format</b> is needed? (CSV, database, JSON)</li>
+            <li>Are there any <b>privacy/legal issues</b>?</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="req-types">
+        <div class="card">
+          <div class="card-title">📊 Types of Data</div>
+          <div class="chips" style="margin-bottom:14px">
+            <span class="chip chip-blue">Structured</span>
+            <span class="chip chip-purple">Unstructured</span>
+            <span class="chip chip-cyan">Time-series</span>
+            <span class="chip chip-green">Categorical</span>
+            <span class="chip chip-amber">Numerical</span>
+          </div>
+          <ul>
+            <li><b>Structured</b> → Tables (easy to process)</li>
+            <li><b>Unstructured</b> → Text, images (complex)</li>
+            <li><b>Time-series</b> → Data over time (stock prices)</li>
+            <li><b>Categorical</b> → Labels (Yes/No, colours)</li>
+            <li><b>Numerical</b> → Continuous values (height, sales)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 5: DATA COLLECTION
+  ══════════════════════════════════════ -->
+  <div class="section" id="datacol">
+    <div class="section-header">
+      <span class="section-icon">🗄️</span>
+      <span class="section-title">Data Collection</span>
+      <span class="section-badge">Step 4</span>
+    </div>
+
+    <div class="tabs">
+      <div class="tab-list">
+        <button class="tab-btn active" onclick="switchTab(this,'col-sources')">📌 Source Types</button>
+        <button class="tab-btn" onclick="switchTab(this,'col-struct')">📂 Data Structures</button>
+      </div>
+
+      <div class="tab-pane active" id="col-sources">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
+          <div class="card">
+            <div class="card-title">1️⃣ Primary Data</div>
+            <ul><li>Collected directly</li><li>High accuracy</li><li>Example: Surveys, sensors</li></ul>
+            <div class="chips" style="margin-top:10px"><span class="chip chip-green">High Accuracy</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">2️⃣ Secondary Data</div>
+            <ul><li>Already available</li><li>Saves time</li><li>Example: Reports, websites</li></ul>
+            <div class="chips" style="margin-top:10px"><span class="chip chip-amber">Time Saving</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">3️⃣ Mixed Data</div>
+            <ul><li>Combination of both</li><li>Best results overall</li></ul>
+            <div class="chips" style="margin-top:10px"><span class="chip chip-purple">Best Results</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="col-struct">
+        <div class="card">
+          <div class="card-title">📂 Structure Types</div>
+          <ul>
+            <li><b>Structured</b> → Fixed format tables (SQL databases, CSV)</li>
+            <li><b>Semi-structured</b> → JSON, XML (flexible schema)</li>
+            <li><b>Unstructured</b> → Images, audio, video, text</li>
+          </ul>
+          <div class="chips" style="margin-top:12px">
+            <span class="chip chip-blue">Structured</span>
+            <span class="chip chip-cyan">Semi-structured</span>
+            <span class="chip chip-red">Unstructured</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 6: DATA UNDERSTANDING
+  ══════════════════════════════════════ -->
+  <div class="section" id="dataund">
+    <div class="section-header">
+      <span class="section-icon">🔍</span>
+      <span class="section-title">Data Understanding</span>
+      <span class="section-badge">Step 5</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;">
+      <div class="card">
+        <div class="card-title">📊 Descriptive Statistics</div>
+        <div class="chips"><span class="chip chip-blue">Mean</span><span class="chip chip-blue">Median</span><span class="chip chip-blue">Mode</span></div>
+        <ul style="margin-top:10px"><li>Range</li><li>Standard deviation</li></ul>
+      </div>
+      <div class="card">
+        <div class="card-title">📈 Data Visualization</div>
+        <ul>
+          <li><b>Histogram</b> → Distribution</li>
+          <li><b>Scatter plot</b> → Relationships</li>
+          <li><b>Box plot</b> → Outliers</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">🕳️ Missing Values</div>
+        <ul><li>Identify null values</li><li>Analyse pattern of missing data</li></ul>
+        <div class="chips" style="margin-top:10px"><span class="chip chip-red">Critical Check</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔺 Outliers</div>
+        <ul><li>Extreme values</li><li>Can affect model accuracy</li></ul>
+        <div class="chips" style="margin-top:10px"><span class="chip chip-amber">Impacts Model</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 7: DATA PREPARATION
+  ══════════════════════════════════════ -->
+  <div class="section" id="dataprep">
+    <div class="section-header">
+      <span class="section-icon">🧹</span>
+      <span class="section-title">Data Preparation</span>
+      <span class="section-badge">Step 6 · Most Important</span>
+    </div>
+
+    <div class="def-box" style="border-color:var(--accent4)">
+      <strong style="color:var(--accent4)">⭐ Most Important Step</strong>
+      Data Preparation converts raw, messy data into a clean, structured format ready for modelling. Poor preparation = poor model performance.
+    </div>
+
+    <div class="collapsible-header open" onclick="toggleCollapsible(this)">
+      <span>🔧 Step 1 — Data Cleaning</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="collapsible-body open">
+      <div class="card">
+        <ul>
+          <li>Remove duplicates</li>
+          <li>Handle missing values (mean/median imputation)</li>
+          <li>Fix errors and inconsistencies</li>
+        </ul>
+        <div class="chips" style="margin-top:10px"><span class="chip chip-blue">Mean Imputation</span><span class="chip chip-blue">Median Imputation</span><span class="chip chip-red">Remove Duplicates</span></div>
+      </div>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span>🔗 Step 2 — Data Integration</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="collapsible-body">
+      <div class="card"><ul><li>Combine multiple datasets into one</li><li>Merge from different sources</li></ul></div>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span>⚙️ Step 3 — Data Transformation</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="collapsible-body">
+      <div class="card">
+        <ul>
+          <li><b>Normalize</b> data (0–1 scale)</li>
+          <li><b>Encode</b> categorical values (Label/One-hot encoding)</li>
+        </ul>
+        <div class="chips" style="margin-top:10px"><span class="chip chip-purple">Normalization</span><span class="chip chip-purple">Encoding</span></div>
+      </div>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span>✨ Step 4 — Feature Engineering</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="collapsible-body">
+      <div class="card">
+        <ul>
+          <li>Create new meaningful features from existing data</li>
+          <li>Significantly improves model performance</li>
+          <li>Example: Extract "day of week" from a date column</li>
+        </ul>
+        <div class="chips" style="margin-top:10px"><span class="chip chip-green">Boosts Performance</span></div>
+      </div>
+    </div>
+
+    <div class="revision-box">
+      <div class="revision-title">⚡ Quick Revision</div>
+      <ul>
+        <li>Cleaning → Integration → Transformation → Feature Engineering</li>
+        <li>Always handle missing values before training</li>
+        <li>Normalization brings values to same scale (prevents bias)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 8: MODELLING
+  ══════════════════════════════════════ -->
+  <div class="section" id="modelling">
+    <div class="section-header">
+      <span class="section-icon">🤖</span>
+      <span class="section-title">Modelling</span>
+      <span class="section-badge">Step 7</span>
+    </div>
+
+    <div class="tabs">
+      <div class="tab-list">
+        <button class="tab-btn active" onclick="switchTab(this,'mod-types')">🔢 Model Types</button>
+        <button class="tab-btn" onclick="switchTab(this,'mod-split')">✂️ Train-Test Split</button>
+      </div>
+
+      <div class="tab-pane active" id="mod-types">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;">
+          <div class="card">
+            <div class="card-title" style="color:#60a5fa">📉 Regression</div>
+            <div class="chips"><span class="chip chip-blue">Numerical Output</span></div>
+            <ul style="margin-top:10px"><li>Output = a number</li><li>Example: House price prediction</li><li>Example: Sales forecasting</li></ul>
+          </div>
+          <div class="card">
+            <div class="card-title" style="color:#a78bfa">🏷️ Classification</div>
+            <div class="chips"><span class="chip chip-purple">Category Output</span></div>
+            <ul style="margin-top:10px"><li>Output = a category</li><li>Example: Spam detection</li><li>Example: Disease diagnosis</li></ul>
+          </div>
+          <div class="card">
+            <div class="card-title" style="color:#34d399">🔵 Clustering</div>
+            <div class="chips"><span class="chip chip-green">Unsupervised</span></div>
+            <ul style="margin-top:10px"><li>Groups similar data</li><li>Example: Customer segmentation</li></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="mod-split">
+        <div class="card">
+          <div class="card-title">✂️ Train-Test Split</div>
+          <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:12px">Splitting data prevents overfitting and evaluates generalization.</p>
+          <div class="split-bar">
+            <div class="split-train">80% — Training</div>
+            <div class="split-test">20% — Testing</div>
+          </div>
+          <ul style="margin-top:12px">
+            <li><b>80%</b> used to train the model</li>
+            <li><b>20%</b> used to test (unseen data)</li>
+            <li>Prevents bias — model shouldn't see test data during training</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 9: EVALUATION & METRICS
+  ══════════════════════════════════════ -->
+  <div class="section" id="evaluation">
+    <div class="section-header">
+      <span class="section-icon">📏</span>
+      <span class="section-title">Evaluation & Metrics</span>
+      <span class="section-badge">Step 8</span>
+    </div>
+
+    <div class="tabs">
+      <div class="tab-list">
+        <button class="tab-btn active" onclick="switchTab(this,'eval-reg')">📉 Regression Metrics</button>
+        <button class="tab-btn" onclick="switchTab(this,'eval-cls')">🏷️ Classification Metrics</button>
+        <button class="tab-btn" onclick="switchTab(this,'eval-memory')">⚡ Memory Tricks</button>
+      </div>
+
+      <!-- REGRESSION -->
+      <div class="tab-pane active" id="eval-reg">
+        <div class="formula-box">
+          <div class="formula-label">Metric 01</div>
+          <div class="formula-name">MAE — Mean Absolute Error</div>
+          <div class="formula-expr">MAE = Σ|yᵢ - ŷᵢ| / n</div>
+          <div class="formula-notes">
+            <span>Average of absolute errors</span>
+            <span>Easy to understand</span>
+            <span>Same unit as output</span>
+          </div>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-label">Metric 02</div>
+          <div class="formula-name">MSE — Mean Squared Error</div>
+          <div class="formula-expr">MSE = Σ(yᵢ - ŷᵢ)² / n</div>
+          <div class="formula-notes">
+            <span>Squares errors → penalizes large mistakes</span>
+            <span>Sensitive to outliers</span>
+          </div>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-label">Metric 03</div>
+          <div class="formula-name">RMSE — Root Mean Squared Error</div>
+          <div class="formula-expr">RMSE = √[ Σ(yᵢ - ŷᵢ)² / n ]</div>
+          <div class="formula-notes">
+            <span>Square root of MSE</span>
+            <span>Same unit as actual values</span>
+            <span>Most commonly used metric</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLASSIFICATION -->
+      <div class="tab-pane" id="eval-cls">
+        <div class="def-box">
+          <strong>📌 Confusion Matrix Terms</strong>
+          <span style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;font-size:0.85rem">
+            <span>✅ <b>TP</b> = True Positive (correctly predicted positive)</span>
+            <span>✅ <b>TN</b> = True Negative (correctly predicted negative)</span>
+            <span>❌ <b>FP</b> = False Positive (predicted positive, actually negative)</span>
+            <span>❌ <b>FN</b> = False Negative (predicted negative, actually positive)</span>
+          </span>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-label">Metric 01</div>
+          <div class="formula-name">Accuracy</div>
+          <div class="formula-expr">Accuracy = (TP + TN) / (TP + TN + FP + FN)</div>
+          <div class="formula-notes"><span>Overall correctness of the model</span></div>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-label">Metric 02</div>
+          <div class="formula-name">Precision</div>
+          <div class="formula-expr">Precision = TP / (TP + FP)</div>
+          <div class="formula-notes"><span>Out of predicted positives, how many are actually correct</span></div>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-label">Metric 03</div>
+          <div class="formula-name">Recall (Sensitivity)</div>
+          <div class="formula-expr">Recall = TP / (TP + FN)</div>
+          <div class="formula-notes"><span>Out of actual positives, how many were detected</span></div>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-label">Metric 04</div>
+          <div class="formula-name">F1 Score</div>
+          <div class="formula-expr">F1 = 2 × (Precision × Recall) / (Precision + Recall)</div>
+          <div class="formula-notes"><span>Harmonic mean — balance between Precision & Recall</span><span>Use when classes are imbalanced</span></div>
+        </div>
+      </div>
+
+      <!-- MEMORY -->
+      <div class="tab-pane" id="eval-memory">
+        <div class="card">
+          <div class="card-title">⚡ Memory Trick — Regression</div>
+          <div class="chips" style="gap:10px">
+            <span class="chip chip-blue">MAE = |absolute| error</span>
+            <span class="chip chip-purple">MSE = squared² error</span>
+            <span class="chip chip-cyan">RMSE = √MSE</span>
+          </div>
+          <ul style="margin-top:14px">
+            <li>MAE → simplest, ignore outlier weight</li>
+            <li>MSE → outliers punished more (squared)</li>
+            <li>RMSE → same units as output → most interpretable</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">⚡ Memory Trick — Classification</div>
+          <ul>
+            <li><b>Accuracy</b> → how often is it right overall</li>
+            <li><b>Precision</b> → when it says yes, is it correct?</li>
+            <li><b>Recall</b> → does it catch all the actual positives?</li>
+            <li><b>F1</b> → use when precision & recall both matter</li>
+          </ul>
+          <div class="def-box" style="margin-top:12px; border-color:var(--accent6)">
+            <strong style="color:var(--accent6)">⚠️ Exam Warning</strong>
+            Never use only Accuracy on imbalanced datasets — use F1 Score instead!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-box">
+      <div class="summary-title">📝 Section Summary</div>
+      <p>Regression uses MAE/MSE/RMSE (numerical output). Classification uses Accuracy, Precision, Recall, and F1 (categorical output). Always choose the metric that aligns with business goals. For imbalanced data, F1 is preferred over Accuracy.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 10: OVERFITTING
+  ══════════════════════════════════════ -->
+  <div class="section" id="overfitting">
+    <div class="section-header">
+      <span class="section-icon">⚖️</span>
+      <span class="section-title">Overfitting vs Underfitting</span>
+      <span class="section-badge">Core Concept</span>
+    </div>
+
+    <div class="fit-grid">
+      <div class="fit-card fit-bad">
+        <div class="fit-icon">🎯❌</div>
+        <div class="fit-title" style="color:#f87171">Overfitting</div>
+        <div class="fit-desc">Model memorizes training data. Performs poorly on new, unseen data. Too complex.</div>
+        <div class="chips" style="margin-top:10px;justify-content:center"><span class="chip chip-red">High Variance</span></div>
+      </div>
+      <div class="fit-card fit-good">
+        <div class="fit-icon">✅</div>
+        <div class="fit-title" style="color:#34d399">Ideal Model</div>
+        <div class="fit-desc">Balanced complexity. Generalizes well. Good accuracy on both train and test data.</div>
+        <div class="chips" style="margin-top:10px;justify-content:center"><span class="chip chip-green">Good Generalization</span></div>
+      </div>
+      <div class="fit-card fit-warn">
+        <div class="fit-icon">📉❌</div>
+        <div class="fit-title" style="color:#fbbf24">Underfitting</div>
+        <div class="fit-desc">Model too simple. Misses patterns. Poor accuracy even on training data.</div>
+        <div class="chips" style="margin-top:10px;justify-content:center"><span class="chip chip-amber">High Bias</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 11: VALIDATION
+  ══════════════════════════════════════ -->
+  <div class="section" id="validation">
+    <div class="section-header">
+      <span class="section-icon">🔁</span>
+      <span class="section-title">Validation Methods</span>
+      <span class="section-badge">Step 7–8</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="card">
+        <div class="card-title">✂️ Train-Test Split</div>
+        <div class="chips"><span class="chip chip-green">✔ Fast</span><span class="chip chip-red">✘ Less Reliable</span></div>
+        <ul style="margin-top:12px">
+          <li>Simple one-time split</li>
+          <li>80% train / 20% test</li>
+          <li>Quick to implement</li>
+          <li>Results can vary based on split</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">🔁 K-Fold Cross Validation</div>
+        <div class="chips"><span class="chip chip-green">✔ Accurate</span><span class="chip chip-green">✔ Full Dataset</span><span class="chip chip-red">✘ Slower</span></div>
+        <ul style="margin-top:12px">
+          <li>Dataset divided into K folds</li>
+          <li>Model trained K times</li>
+          <li>Each fold used as test once</li>
+          <li>More reliable performance estimate</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 12: QUIZ
+  ══════════════════════════════════════ -->
+  <div class="section" id="quiz">
+    <div class="section-header">
+      <span class="section-icon">❓</span>
+      <span class="section-title">Interactive Quiz</span>
+      <span class="section-badge">10 Questions</span>
+    </div>
+
+    <div class="quiz-container">
+
+      <!-- Q1 MCQ -->
+      <div class="quiz-q" data-type="mcq" data-answer="2">
+        <div class="quiz-q-num">Q1 · MCQ</div>
+        <div class="quiz-q-text">Which step in the Data Science Pipeline is considered the most important?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="selectOpt(this,0)"><div class="quiz-opt-key">A</div> Business Understanding</div>
+          <div class="quiz-opt" onclick="selectOpt(this,1)"><div class="quiz-opt-key">B</div> Modelling</div>
+          <div class="quiz-opt" onclick="selectOpt(this,2)"><div class="quiz-opt-key">C</div> Data Preparation</div>
+          <div class="quiz-opt" onclick="selectOpt(this,3)"><div class="quiz-opt-key">D</div> Deployment</div>
+        </div>
+      </div>
+
+      <!-- Q2 MCQ -->
+      <div class="quiz-q" data-type="mcq" data-answer="1">
+        <div class="quiz-q-num">Q2 · MCQ</div>
+        <div class="quiz-q-text">Which analytics type answers "Why did it happen?"</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="selectOpt(this,0)"><div class="quiz-opt-key">A</div> Descriptive</div>
+          <div class="quiz-opt" onclick="selectOpt(this,1)"><div class="quiz-opt-key">B</div> Diagnostic</div>
+          <div class="quiz-opt" onclick="selectOpt(this,2)"><div class="quiz-opt-key">C</div> Predictive</div>
+          <div class="quiz-opt" onclick="selectOpt(this,3)"><div class="quiz-opt-key">D</div> Prescriptive</div>
+        </div>
+      </div>
+
+      <!-- Q3 MCQ -->
+      <div class="quiz-q" data-type="mcq" data-answer="3">
+        <div class="quiz-q-num">Q3 · MCQ</div>
+        <div class="quiz-q-text">What does RMSE stand for?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="selectOpt(this,0)"><div class="quiz-opt-key">A</div> Real Mean Standard Error</div>
+          <div class="quiz-opt" onclick="selectOpt(this,1)"><div class="quiz-opt-key">B</div> Ranked Mean Squared Error</div>
+          <div class="quiz-opt" onclick="selectOpt(this,2)"><div class="quiz-opt-key">C</div> Root Mean Squared Evaluation</div>
+          <div class="quiz-opt" onclick="selectOpt(this,3)"><div class="quiz-opt-key">D</div> Root Mean Squared Error</div>
+        </div>
+      </div>
+
+      <!-- Q4 MCQ -->
+      <div class="quiz-q" data-type="mcq" data-answer="0">
+        <div class="quiz-q-num">Q4 · MCQ</div>
+        <div class="quiz-q-text">Which metric should be used when data classes are imbalanced?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="selectOpt(this,0)"><div class="quiz-opt-key">A</div> F1 Score</div>
+          <div class="quiz-opt" onclick="selectOpt(this,1)"><div class="quiz-opt-key">B</div> Accuracy</div>
+          <div class="quiz-opt" onclick="selectOpt(this,2)"><div class="quiz-opt-key">C</div> MAE</div>
+          <div class="quiz-opt" onclick="selectOpt(this,3)"><div class="quiz-opt-key">D</div> RMSE</div>
+        </div>
+      </div>
+
+      <!-- Q5 MCQ -->
+      <div class="quiz-q" data-type="mcq" data-answer="2">
+        <div class="quiz-q-num">Q5 · MCQ</div>
+        <div class="quiz-q-text">In K-Fold Cross Validation, what happens to each fold?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="selectOpt(this,0)"><div class="quiz-opt-key">A</div> Only one fold is ever used for testing</div>
+          <div class="quiz-opt" onclick="selectOpt(this,1)"><div class="quiz-opt-key">B</div> All folds are used for training only</div>
+          <div class="quiz-opt" onclick="selectOpt(this,2)"><div class="quiz-opt-key">C</div> Each fold is used as test data once</div>
+          <div class="quiz-opt" onclick="selectOpt(this,3)"><div class="quiz-opt-key">D</div> Random folds are discarded</div>
+        </div>
+      </div>
+
+      <!-- Q6 MCQ -->
+      <div class="quiz-q" data-type="mcq" data-answer="1">
+        <div class="quiz-q-num">Q6 · MCQ</div>
+        <div class="quiz-q-text">A model performs very well on training data but poorly on test data. This is called:</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="selectOpt(this,0)"><div class="quiz-opt-key">A</div> Underfitting</div>
+          <div class="quiz-opt" onclick="selectOpt(this,1)"><div class="quiz-opt-key">B</div> Overfitting</div>
+          <div class="quiz-opt" onclick="selectOpt(this,2)"><div class="quiz-opt-key">C</div> Ideal Fit</div>
+          <div class="quiz-opt" onclick="selectOpt(this,3)"><div class="quiz-opt-key">D</div> Bias-free model</div>
+        </div>
+      </div>
+
+      <!-- Q7 MCQ -->
+      <div class="quiz-q" data-type="mcq" data-answer="0">
+        <div class="quiz-q-num">Q7 · MCQ</div>
+        <div class="quiz-q-text">Precision is defined as:</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="selectOpt(this,0)"><div class="quiz-opt-key">A</div> TP / (TP + FP)</div>
+          <div class="quiz-opt" onclick="selectOpt(this,1)"><div class="quiz-opt-key">B</div> TP / (TP + FN)</div>
+          <div class="quiz-opt" onclick="selectOpt(this,2)"><div class="quiz-opt-key">C</div> (TP + TN) / Total</div>
+          <div class="quiz-opt" onclick="selectOpt(this,3)"><div class="quiz-opt-key">D</div> TN / (TN + FP)</div>
+        </div>
+      </div>
+
+      <!-- Q8 Short Answer -->
+      <div class="quiz-q" data-type="short">
+        <div class="quiz-q-num">Q8 · Short Answer</div>
+        <div class="quiz-q-text">Name the 4 types of Data Analytics in order (Descriptive → Prescriptive).</div>
+        <textarea class="short-answer-input" placeholder="Type your answer here..."></textarea>
+        <button class="reveal-btn" onclick="revealAnswer(this)">Reveal Answer</button>
+        <div class="answer-reveal">✅ Descriptive → Diagnostic → Predictive → Prescriptive. Each builds on the previous: What happened → Why → What will happen → What to do.</div>
+      </div>
+
+      <!-- Q9 Case-based -->
+      <div class="quiz-q" data-type="short">
+        <div class="quiz-q-num">Q9 · Case Based</div>
+        <div class="quiz-q-text">A hospital wants to detect cancer patients. Which metric is more critical — Precision or Recall? Why?</div>
+        <textarea class="short-answer-input" placeholder="Type your reasoning..."></textarea>
+        <button class="reveal-btn" onclick="revealAnswer(this)">Reveal Answer</button>
+        <div class="answer-reveal">✅ Recall is more critical. Missing an actual cancer case (False Negative) is far more dangerous than a false alarm. High Recall ensures all actual cancer patients are detected, even at the cost of some false positives.</div>
+      </div>
+
+      <!-- Q10 Case-based -->
+      <div class="quiz-q" data-type="short">
+        <div class="quiz-q-num">Q10 · Case Based</div>
+        <div class="quiz-q-text">You are predicting house prices. Which evaluation metrics would you use? Why not Accuracy?</div>
+        <textarea class="short-answer-input" placeholder="Type your reasoning..."></textarea>
+        <button class="reveal-btn" onclick="revealAnswer(this)">Reveal Answer</button>
+        <div class="answer-reveal">✅ Use MAE, MSE, or RMSE — these are regression metrics for numerical outputs. Accuracy is only for classification (categorical output). Since house price is a number, we need metrics that measure how far off our predictions are from actual values.</div>
+      </div>
+
+    </div>
+
+    <button class="submit-quiz-btn" onclick="submitQuiz()">📊 Check MCQ Score</button>
+    <div id="quiz-score">
+      <div class="score-num" id="score-num">0/7</div>
+      <div class="score-label" id="score-label">MCQ Score</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 13: EXAM QUESTIONS
+  ══════════════════════════════════════ -->
+  <div class="section" id="examq">
+    <div class="section-header">
+      <span class="section-icon">📝</span>
+      <span class="section-title">Probable Exam Questions</span>
+      <span class="section-badge">High Priority</span>
+    </div>
+
+    <div class="def-box" style="margin-bottom:20px">
+      <strong>📌 How to Use</strong>
+      These are likely exam questions based on the content. Practice writing structured answers covering definitions, examples, and formulas.
+    </div>
+
+    <div class="exam-q"><span class="exam-q-num">01</span><span>Explain the John Rollins 10-step Data Science Pipeline with brief examples for each step.</span><span class="exam-mark">10 marks</span></div>
+    <div class="exam-q"><span class="exam-q-num">02</span><span>Differentiate between Descriptive, Diagnostic, Predictive, and Prescriptive Analytics with one real-world example each.</span><span class="exam-mark">8 marks</span></div>
+    <div class="exam-q"><span class="exam-q-num">03</span><span>Why is Data Preparation considered the most important step? What sub-tasks does it include?</span><span class="exam-mark">6 marks</span></div>
+    <div class="exam-q"><span class="exam-q-num">04</span><span>Define MAE, MSE, and RMSE. Write their formulas and state when each is preferred.</span><span class="exam-mark">6 marks</span></div>
+    <div class="exam-q"><span class="exam-q-num">05</span><span>Explain the Confusion Matrix. Define TP, TN, FP, FN. Derive Precision, Recall, and F1 Score.</span><span class="exam-mark">8 marks</span></div>
+    <div class="exam-q"><span class="exam-q-num">06</span><span>Compare Overfitting and Underfitting. How can each be corrected?</span><span class="exam-mark">5 marks</span></div>
+    <div class="exam-q"><span class="exam-q-num">07</span><span>Compare Train-Test Split with K-Fold Cross Validation. Which is more reliable and why?</span><span class="exam-mark">5 marks</span></div>
+    <div class="exam-q"><span class="exam-q-num">08</span><span>What is Feature Engineering? How does it improve model performance? Give two examples.</span><span class="exam-mark">4 marks</span></div>
+    <div class="exam-q"><span class="exam-q-num">09</span><span>A company is building a spam detector. Define: target variable, suitable model type, and evaluation metric. Justify each choice.</span><span class="exam-mark">6 marks</span></div>
+    <div class="exam-q"><span class="exam-q-num">10</span><span>Distinguish between Structured, Semi-structured, and Unstructured data with examples of each.</span><span class="exam-mark">3 marks</span></div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 14: EXAM TIPS
+  ══════════════════════════════════════ -->
+  <div class="section" id="tips">
+    <div class="section-header">
+      <span class="section-icon">⚡</span>
+      <span class="section-title">Final Exam Tips</span>
+      <span class="section-badge">Very Important</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="revision-box">
+        <div class="revision-title">✅ Always Mention</div>
+        <ul>
+          <li>Target variable + features (Step 3)</li>
+          <li>Data cleaning + feature engineering (Step 6)</li>
+          <li>Train-test split (Step 7)</li>
+          <li>Correct metrics (Step 8)</li>
+          <li>Business goal alignment</li>
+        </ul>
+      </div>
+      <div class="revision-box" style="border-color:rgba(239,68,68,0.25); background: linear-gradient(135deg,rgba(239,68,68,0.06),rgba(239,68,68,0.03))">
+        <div class="revision-title" style="color:var(--accent6)">❌ Common Mistakes to Avoid</div>
+        <ul>
+          <li>Ignoring missing values</li>
+          <li>Using only Accuracy on imbalanced data</li>
+          <li>Not explaining overfitting</li>
+          <li>Confusing Precision & Recall</li>
+          <li>Skipping feature engineering mention</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="summary-box" style="margin-top:20px">
+      <div class="summary-title">🏁 Final Summary</div>
+      <p>The Data Science Pipeline has 10 steps organized in 5 modules. Data Preparation (Step 6) is most critical. Evaluation uses regression metrics (MAE/MSE/RMSE) or classification metrics (Accuracy/Precision/Recall/F1) depending on output type. Always use F1 for imbalanced data. K-Fold is more reliable than simple train-test split. Good luck! 🎯</p>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<script>
+  // ─── SIDEBAR TOGGLE ───
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('show');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+  }
+
+  // ─── SMOOTH SCROLL + ACTIVE NAV ───
+  function scrollTo(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    event.target.closest('.nav-item').classList.add('active');
+    closeSidebar();
+  }
+
+  // ─── STEP CARDS ───
+  function toggleStep(card) {
+    const body = card.querySelector('.step-body');
+    body.classList.toggle('open');
+  }
+
+  // ─── TABS ───
+  function switchTab(btn, paneId) {
+    const container = btn.closest('.tabs');
+    container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    container.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(paneId).classList.add('active');
+  }
+
+  // ─── COLLAPSIBLE ───
+  function toggleCollapsible(header) {
+    header.classList.toggle('open');
+    const body = header.nextElementSibling;
+    body.classList.toggle('open');
+  }
+
+  // ─── QUIZ MCQ ───
+  let quizAnswers = {};
+
+  function selectOpt(el, idx) {
+    const qBox = el.closest('.quiz-q');
+    const opts = qBox.querySelectorAll('.quiz-opt');
+    const correct = parseInt(qBox.dataset.answer);
+    const qIdx = [...document.querySelectorAll('.quiz-q')].indexOf(qBox);
+
+    opts.forEach(o => { o.classList.remove('correct','wrong'); o.style.pointerEvents = 'none'; });
+
+    if (idx === correct) {
+      el.classList.add('correct');
+      quizAnswers[qIdx] = true;
+    } else {
+      el.classList.add('wrong');
+      opts[correct].classList.add('correct');
+      quizAnswers[qIdx] = false;
+    }
+
+    updateProgress();
+  }
+
+  function revealAnswer(btn) {
+    const reveal = btn.nextElementSibling;
+    reveal.classList.toggle('show');
+    btn.textContent = reveal.classList.contains('show') ? '🙈 Hide Answer' : 'Reveal Answer';
+  }
+
+  function submitQuiz() {
+    const mcqBoxes = [...document.querySelectorAll('.quiz-q[data-type="mcq"]')];
+    let correct = 0;
+    mcqBoxes.forEach((box, i) => {
+      const idx = [...document.querySelectorAll('.quiz-q')].indexOf(box);
+      if (quizAnswers[idx]) correct++;
+    });
+    const score = document.getElementById('quiz-score');
+    score.style.display = 'block';
+    document.getElementById('score-num').textContent = `${correct}/${mcqBoxes.length}`;
+    const pct = Math.round((correct/mcqBoxes.length)*100);
+    document.getElementById('score-label').textContent = `${pct}% — ${pct>=80?'Excellent! 🎉':pct>=60?'Good job! 💪':'Keep revising! 📚'}`;
+    score.scrollIntoView({ behavior:'smooth' });
+  }
+
+  // ─── PROGRESS ───
+  function updateProgress() {
+    const total = 7; // MCQ count
+    const done = Object.keys(quizAnswers).length;
+    const pct = Math.min(100, Math.round((done/total)*100));
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+  }
+
+  // ─── SCROLL SPY ───
+  const sections = ['pipeline','modules','analytics','datareq','datacol','dataund','dataprep','modelling','evaluation','overfitting','validation','quiz','examq','tips'];
+  const navItems = document.querySelectorAll('.nav-item');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top < 120) current = id;
+    });
+    if (current) {
+      navItems.forEach(n => {
+        n.classList.toggle('active', n.getAttribute('onclick') && n.getAttribute('onclick').includes(current));
+      });
+    }
+  });
+</script>
+</body>
+</html>
